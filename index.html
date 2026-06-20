@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<title>我的菜谱</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ====== Tab Bar ====== -->
+  <nav id="tab-bar" class="tab-bar">
+    <div class="tab-item active" data-page="home"><span class="tab-icon">🏠</span><span>首页</span></div>
+    <div class="tab-item" data-page="browse"><span class="tab-icon">📂</span><span>分类</span></div>
+    <div class="tab-item" data-page="shopping-list"><span class="tab-icon">🛒</span><span>待买清单</span></div>
+    <div class="tab-item" data-page="mine"><span class="tab-icon">👤</span><span>我的</span></div>
+  </nav>
+
+  <!-- ====== FAB (centered to app, not viewport) ====== -->
+  <div id="fab-add" class="fab-add" onclick="toggleFabMenu()">+</div>
+  <div id="fab-menu" class="fab-menu" style="display:none">
+    <div class="fab-option" onclick="fabAction('edit')">✏️ 手动添加菜谱</div>
+    <div class="fab-option" onclick="fabAction('import')">📥 导入菜谱</div>
+    <div class="fab-option fab-cancel" onclick="toggleFabMenu()">取消</div>
+  </div>
+  <div id="fab-overlay" class="fab-overlay" style="display:none" onclick="toggleFabMenu()"></div>
+
+  <div id="app">
+  <div id="toast" class="toast"></div>
+
+  <!-- ====== HOME ====== -->
+  <section id="page-home" class="page active">
+    <div class="pg-home">
+      <div class="pg-home-top">
+        <div class="pg-home-title">我的菜谱</div>
+        <div class="pg-home-subtitle" id="home-subtitle">0 道菜</div>
+      </div>
+    </div>
+    <div class="stats-row home-stats">
+      <div class="stat-card" onclick="switchTab('shopping-list')">
+        <div class="stat-num" id="stat-shop">0</div><div class="stat-lbl">待买清单</div>
+      </div>
+      <div class="stat-card" onclick="switchTab('browse')">
+        <div class="stat-num" id="stat-total">0</div><div class="stat-lbl">全部菜谱</div>
+      </div>
+    </div>
+    <!-- +++ 添加快捷入口回到首页 +++ -->
+    <div class="quick-acts">
+      <button class="btn btn-prim btn-add-hm" onclick="page('edit')">✏️ 添加菜谱</button>
+    </div>
+    <div class="section"><div class="sec-hd"><span class="sec-tl">分类概览</span><span class="sec-edit" onclick="page('edit-cats')">编辑</span></div>
+      <div class="cat-chips" id="home-cats"></div>
+    </div>
+    <div class="section"><div class="sec-hd"><span class="sec-tl">最近添加</span></div>
+      <div id="home-recent" class="recipe-list"></div>
+    </div>
+  </section>
+
+  <!-- ====== BROWSE ====== -->
+  <section id="page-browse" class="page">
+    <div class="browse-container">
+      <div class="browse-sidebar" id="browse-sidebar">
+        <div class="sidebar-inner" id="sidebar-inner"></div>
+        <div class="sidebar-add" onclick="addBrowseCategory()">+</div>
+      </div>
+      <div class="browse-main" id="browse-main">
+        <div class="browse-main-header">
+          <span id="browse-main-title">全部菜谱</span>
+          <span class="browse-search-icon" onclick="openBrowseSearch()">🔍</span>
+        </div>
+        <div id="browse-search-box" class="browse-search-box" style="display:none">
+          <input id="browse-search-input" class="browse-search-input" placeholder="搜索菜谱…" oninput="doBrowseSearch()" />
+          <span class="browse-search-close" onclick="closeBrowseSearch()">取消</span>
+        </div>
+        <div id="browse-cards" class="browse-cards"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SEARCH ====== -->
+  <section id="page-search" class="page sub-page">
+    <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> 搜索菜谱</div>
+    <div class="mode-tog"><span class="mode-btn active" data-mode="name" onclick="switchSearchMode('name')">按菜名搜</span><span class="mode-btn" data-mode="ingr" onclick="switchSearchMode('ingr')">按食材搜</span></div>
+    <div id="search-name-box" class="search-box"><div class="inp-wrap"><span>🔍</span><input id="search-name-input" placeholder="输入菜名或标签…" oninput="doSearchName()"><span class="clr" onclick="clearSearch()">✕</span></div></div>
+    <div id="search-ingr-box" class="search-box" style="display:none"><div class="inp-wrap"><span>🥬</span><input id="search-ingr-input" placeholder="输入食材，回车添加…" onkeydown="if(event.key==='Enter')addIngrTag()"><span class="add" onclick="addIngrTag()">添加</span></div><div id="ingr-tags" class="ingr-tags"></div></div>
+    <div id="search-results" class="results"></div>
+  </section>
+
+  <!-- ====== MINE ====== -->
+  <section id="page-mine" class="page">
+    <div class="pg-header pg-header-blur">我的</div>
+    <div class="mine-stats"><div class="ms" onclick="switchTab('browse')"><span class="ms-num" id="mine-count">0</span><span>道菜谱</span></div><div class="ms" onclick="switchTab('shopping-list')"><span class="ms-num" id="mine-shop">0</span><span>待买清单</span></div></div>
+    <div class="storage-bar" id="storage-bar"></div>
+    <div class="menu-sec"><div class="menu-tl">功能</div>
+      <div class="menu-itm" onclick="switchTab('shopping-list')"><span class="menu-icon-s">🛒</span> 待买清单 <span class="badge" id="menu-badge">0</span><span class="menu-arrow">›</span></div>
+      <div class="menu-itm" onclick="page('edit-cats')"><span class="menu-icon-s">🏷️</span> 编辑分类<span class="menu-arrow">›</span></div>
+    </div>
+    <div class="menu-sec"><div class="menu-tl">数据</div>
+      <div class="menu-itm" onclick="exportData()"><span class="menu-icon-s">📤</span> 导出菜谱数据<span class="menu-arrow">›</span></div>
+      <div class="menu-itm" onclick="importData()"><span class="menu-icon-s">📥</span> 导入备份<span class="menu-arrow">›</span></div>
+      <div class="menu-itm menu-itm-danger" onclick="clearAllData()"><span class="menu-icon-s">🗑</span> 清空所有数据<span class="menu-arrow">›</span></div>
+    </div>
+  </section>
+
+  <!-- ====== DETAIL ====== -->
+  <section id="page-detail" class="page sub-page">
+    <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> 菜谱详情</div>
+    <div id="detail-content" class="detail-content"></div>
+    <div class="bottom-bar" id="detail-bar"></div>
+  </section>
+
+  <!-- ====== EDIT ====== -->
+  <section id="page-edit" class="page sub-page">
+    <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> <span id="edit-title">添加菜谱</span></div>
+    <div class="edit-form" id="edit-form"></div>
+    <div class="save-bar"><button class="btn btn-prim btn-lg" onclick="saveRecipe()">保存</button></div>
+  </section>
+
+  <!-- ====== SHOPPING LIST (tab page, not sub-page) ====== -->
+  <section id="page-shopping-list" class="page shop-page">
+    <div class="pg-header pg-header-blur">待买清单</div>
+    <div id="shop-content"></div>
+    <div class="shop-sticky-bar" id="shop-bar" style="display:none">
+      <button class="btn btn-ios-outl" onclick="clearShopChecked()">清空勾选</button>
+      <button class="btn btn-ios-outl" onclick="deleteCheckedIngredients()">删除食材</button>
+      <button class="btn btn-dang" onclick="clearShopAll()">清空清单</button>
+    </div>
+  </section>
+
+  <!-- ====== IMPORT ====== -->
+  <section id="page-import" class="page sub-page">
+    <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> 导入菜谱</div>
+    <div class="card">
+      <div class="card-tl">粘贴链接或文字</div>
+      <div class="card-desc">• 网页链接：自动解析<br>• 菜谱文字：自动识别食材和步骤</div>
+      <textarea id="import-text" class="import-textarea" placeholder="粘贴链接或菜谱文字……"></textarea>
+      <div id="import-error" class="import-error"></div>
+      <button class="btn btn-prim btn-lg" onclick="doUnifiedImport()" style="margin-top:12px;width:100%">🔍 自动解析</button>
+      <div id="import-results" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- ====== EDIT CATEGORIES ====== -->
+  <section id="page-edit-cats" class="page sub-page">
+    <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> 编辑分类</div>
+    <div class="edit-form" id="edit-cats-form"></div>
+    <div class="save-bar"><button class="btn btn-prim btn-lg" onclick="saveCategories()">保存分类</button></div>
+  </section>
+
+</div><!-- #app -->
+
+<script src="utils.js?v=2"></script>
+<script src="store.js?v=2"></script>
+<script src="normalize.js?v=2"></script>
+<script src="shop.js?v=2"></script>
+<script src="ui.js?v=2"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>

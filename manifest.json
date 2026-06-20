@@ -1,0 +1,16 @@
+{
+  "name": "我的菜谱",
+  "short_name": "菜谱",
+  "description": "个人菜谱管理工具",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F2F2F7",
+  "theme_color": "#007AFF",
+  "icons": [
+    {
+      "src": "/assets/icons/home-active.png",
+      "sizes": "81x81",
+      "type": "image/png"
+    }
+  ]
+}
