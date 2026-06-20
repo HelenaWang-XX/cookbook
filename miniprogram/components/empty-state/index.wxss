@@ -1,0 +1,4 @@
+.empty-state { padding: 80rpx var(--space-xl); }
+.empty-icon { font-size: 80rpx; }
+.empty-title { font-size: var(--font-md); color: var(--color-text-secondary); margin-top: var(--space-md); }
+.empty-desc { font-size: var(--font-sm); color: var(--color-text-hint); margin-top: var(--space-sm); text-align: center; }

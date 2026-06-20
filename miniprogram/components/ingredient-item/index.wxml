@@ -1,0 +1,4 @@
+<view class="ingredient-item">
+  <text class="ing-name">{{ingredient.canonicalName}}</text>
+  <text class="ing-amount">{{ingredient.amount}}</text>
+</view>

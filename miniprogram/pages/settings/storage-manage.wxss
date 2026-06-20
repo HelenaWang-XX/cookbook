@@ -1,0 +1,17 @@
+.page { min-height: 100vh; background: var(--color-bg); }
+.usage-card { background: var(--color-bg-white); padding: var(--space-lg); margin: var(--space-md); border-radius: var(--radius-md); }
+.usage-title { font-size: var(--font-lg); font-weight: 600; display: block; margin-bottom: var(--space-md); }
+.progress-bar { height: 16rpx; background: var(--color-divider); border-radius: 8rpx; overflow: hidden; margin-bottom: var(--space-sm); }
+.progress-fill { height: 100%; background: var(--color-primary); border-radius: 8rpx; transition: width 0.3s; }
+.fill-warn { background: var(--color-danger); }
+.usage-text { font-size: var(--font-sm); color: var(--color-text-hint); }
+.warn-text { font-size: var(--font-sm); color: var(--color-danger); margin-top: var(--space-xs); display: block; }
+
+.menu-section { margin-bottom: var(--space-md); }
+.menu-title { font-size: var(--font-xs); color: var(--color-text-hint); padding: 0 var(--space-md); margin-bottom: var(--space-xs); }
+.menu-item { display: flex; align-items: center; gap: var(--space-md); background: var(--color-bg-white); padding: var(--space-md); border-bottom: 1rpx solid var(--color-divider); }
+.menu-icon { font-size: var(--font-xl); }
+.menu-info { flex: 1; }
+.menu-label { font-size: var(--font-md); display: block; }
+.menu-desc { font-size: var(--font-xs); color: var(--color-text-hint); margin-top: 2rpx; }
+.menu-arrow { color: var(--color-text-hint); font-size: var(--font-lg); }

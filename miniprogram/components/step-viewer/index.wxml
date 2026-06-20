@@ -1,0 +1,19 @@
+<view class="step-viewer">
+  <view class="step" wx:for="{{steps}}" wx:key="order">
+    <view class="step-indicator">
+      <view class="step-circle">{{item.order}}</view>
+      <view wx:if="{{index < steps.length - 1}}" class="step-line"></view>
+    </view>
+    <view class="step-body">
+      <text class="step-desc">{{item.description}}</text>
+      <image
+        wx:if="{{item.imagePath}}"
+        class="step-image"
+        src="{{item.imagePath}}"
+        mode="aspectFill"
+        bindtap="onPreviewImage"
+        data-src="{{item.imagePath}}"
+      />
+    </view>
+  </view>
+</view>

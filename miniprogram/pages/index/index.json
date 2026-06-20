@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "我的菜谱",
+  "usingComponents": {
+    "recipe-card": "/components/recipe-card/index",
+    "empty-state": "/components/empty-state/index",
+    "storage-indicator": "/components/storage-indicator/index"
+  }
+}

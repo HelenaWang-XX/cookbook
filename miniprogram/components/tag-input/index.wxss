@@ -1,0 +1,5 @@
+.tag-input { background: var(--color-bg); border-radius: var(--radius-sm); padding: var(--space-sm); }
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-xs); }
+.tag { display: inline-flex; align-items: center; gap: 4rpx; background: var(--color-primary); color: #fff; font-size: var(--font-xs); padding: 4rpx 12rpx; border-radius: var(--radius-sm); }
+.tag-close { font-size: 18rpx; opacity: 0.8; }
+.input { font-size: var(--font-sm); }

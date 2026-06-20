@@ -1,0 +1,98 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-white);
+  border-bottom: 1rpx solid var(--color-border);
+}
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.check-all {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-sm);
+}
+.checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border: 2rpx solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xs);
+}
+.checkbox.checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.toolbar-count {
+  font-size: var(--font-xs);
+  color: var(--color-text-hint);
+}
+.toolbar-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+.toolbar-link {
+  font-size: var(--font-sm);
+  color: var(--color-text-hint);
+}
+.toolbar-link.danger {
+  color: var(--color-danger);
+}
+
+/* 清单项 */
+.list {
+  background: var(--color-bg-white);
+}
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+.item-check {
+  flex-shrink: 0;
+}
+.item-info {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.item-name {
+  font-size: var(--font-md);
+  font-weight: 500;
+}
+.item-amount {
+  font-size: var(--font-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.item-amount-raw {
+  font-size: var(--font-xs);
+  color: var(--color-text-hint);
+}
+.item-arrow {
+  color: var(--color-text-hint);
+  font-size: var(--font-lg);
+}
+.item-checked .item-name,
+.item-checked .item-amount {
+  text-decoration: line-through;
+  color: var(--color-text-hint);
+}

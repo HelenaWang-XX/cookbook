@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "recipe-card": "/components/recipe-card/index"
+  }
+}

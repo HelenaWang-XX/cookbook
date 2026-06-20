@@ -1,0 +1,133 @@
+<!-- 菜谱编辑页 -->
+<scroll-view class="page" scroll-y>
+
+  <!-- 封面图 -->
+  <view class="cover-section">
+    <image
+      wx:if="{{coverImagePath}}"
+      class="cover-preview"
+      src="{{coverImagePath}}"
+      mode="aspectFill"
+      bindtap="onCoverUpload"
+    />
+    <view wx:else class="cover-placeholder" bindtap="onCoverUpload">
+      <text class="placeholder-icon">📷</text>
+      <text class="placeholder-text">点击上传成品图</text>
+    </view>
+    <text wx:if="{{coverImagePath}}" class="cover-remove" bindtap="onCoverRemove">移除图片</text>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="form-section">
+    <text class="section-label">菜名 *</text>
+    <input class="form-input" placeholder="如：番茄炒蛋" value="{{name}}" bindinput="onNameInput" />
+
+    <text class="section-label">分类</text>
+    <picker mode="selector" range="{{categories}}" range-key="label" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="picker-value">{{categories[categoryIndex].label}}</view>
+    </picker>
+
+    <text class="section-label">子分类（选填）</text>
+    <input class="form-input" placeholder="如：家常菜、川菜…" value="{{subcategory}}" bindinput="onSubcategoryInput" />
+
+    <text class="section-label">烹饪时间（分钟）</text>
+    <input class="form-input" type="number" placeholder="如：30" value="{{prepTime}}" bindinput="onPreptimeInput" />
+
+    <text class="section-label">份量：{{servings}}人份</text>
+    <slider min="1" max="10" step="1" value="{{servings}}" bindchange="onServingsChange" show-value="{{false}}" />
+
+    <text class="section-label">难度</text>
+    <picker mode="selector" range="{{difficultyOptions}}" range-key="label" value="{{difficulty - 1}}" bindchange="onDifficultyChange">
+      <view class="picker-value">{{difficultyOptions[difficulty - 1].label}}</view>
+    </picker>
+  </view>
+
+  <!-- 食材 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-label">食材 *</text>
+      <text class="add-link" bindtap="addIngredientRow">+ 添加食材</text>
+    </view>
+    <view
+      class="ingredient-row"
+      wx:for="{{ingredientRows}}"
+      wx:key="id"
+    >
+      <text class="row-num">{{index + 1}}</text>
+      <input
+        class="form-input flex-1"
+        placeholder="如：鸡蛋 2个"
+        value="{{item.value}}"
+        data-index="{{index}}"
+        bindinput="onIngredientInput"
+      />
+      <text class="row-delete" data-index="{{index}}" bindtap="removeIngredientRow">✕</text>
+    </view>
+  </view>
+
+  <!-- 步骤 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-label">步骤 *</text>
+      <text class="add-link" bindtap="addStepRow">+ 添加步骤</text>
+    </view>
+    <view
+      class="step-row"
+      wx:for="{{stepRows}}"
+      wx:key="id"
+    >
+      <text class="step-order">{{item.order}}</text>
+      <view class="step-content">
+        <textarea
+          class="step-textarea"
+          placeholder="第{{item.order}}步…"
+          value="{{item.description}}"
+          data-index="{{index}}"
+          bindinput="onStepInput"
+          auto-height
+        />
+        <view class="step-image-row">
+          <image
+            wx:if="{{item.imagePath}}"
+            class="step-thumb"
+            src="{{item.imagePath}}"
+            mode="aspectFill"
+            data-index="{{index}}"
+            bindtap="onStepImage"
+          />
+          <view wx:else class="step-add-img" data-index="{{index}}" bindtap="onStepImage">
+            <text>+ 添加图片</text>
+          </view>
+        </view>
+      </view>
+      <text class="row-delete" data-index="{{index}}" bindtap="removeStepRow">✕</text>
+    </view>
+  </view>
+
+  <!-- 标签 -->
+  <view class="form-section">
+    <text class="section-label">标签</text>
+    <tag-input tags="{{tags}}" bindchange="onTagsChange" />
+  </view>
+
+  <!-- 备注 -->
+  <view class="form-section">
+    <text class="section-label">备注（选填）</text>
+    <textarea
+      class="form-textarea"
+      placeholder="个人心得、注意事项…"
+      value="{{notes}}"
+      bindinput="onNotesInput"
+      auto-height
+    />
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-bar safe-area-bottom">
+    <button class="save-btn" bindtap="onSave" loading="{{saving}}">
+      {{isEdit ? '保存修改' : '添加菜谱'}}
+    </button>
+  </view>
+
+  <view style="height: 40rpx;"></view>
+</scroll-view>

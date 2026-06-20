@@ -1,0 +1,8 @@
+.mask { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { background: #fff; border-radius: var(--radius-lg); padding: var(--space-xl); width: 560rpx; text-align: center; }
+.title { font-size: var(--font-lg); font-weight: 600; display: block; margin-bottom: var(--space-md); }
+.content { font-size: var(--font-sm); color: var(--color-text-secondary); display: block; margin-bottom: var(--space-lg); }
+.actions { display: flex; gap: var(--space-md); }
+.btn { flex: 1; text-align: center; padding: var(--space-sm) 0; border-radius: var(--radius-md); font-size: var(--font-md); }
+.cancel { background: var(--color-bg); color: var(--color-text-primary); }
+.confirm { background: var(--color-primary); color: #fff; }

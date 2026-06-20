@@ -1,0 +1,14 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: var(--space-md); }
+.step-card { background: var(--color-bg-white); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-md); }
+.step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); }
+.step-num { font-size: var(--font-lg); font-weight: 700; color: var(--color-primary); }
+.step-actions { display: flex; gap: var(--space-md); font-size: var(--font-lg); }
+.step-actions .delete { color: var(--color-danger); }
+.step-textarea { width: 100%; font-size: var(--font-sm); min-height: 80rpx; }
+.step-img-row { margin-top: var(--space-sm); }
+.step-img { width: 160rpx; height: 120rpx; border-radius: var(--radius-sm); background: var(--color-divider); }
+.step-add-img { font-size: var(--font-sm); color: var(--color-primary); padding: var(--space-xs); }
+.add-bar { text-align: center; margin: var(--space-md) 0; }
+.add-btn { display: inline-block; color: var(--color-primary); background: none; border: 1rpx dashed var(--color-primary); border-radius: var(--radius-round); padding: var(--space-sm) var(--space-xl); font-size: var(--font-sm); }
+.save-bar { padding: var(--space-md) 0; }
+.save-btn { width: 100%; background: var(--color-primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: var(--font-lg); padding: var(--space-sm) 0; }

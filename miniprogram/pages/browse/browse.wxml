@@ -1,0 +1,55 @@
+<!-- 分类浏览页 -->
+<scroll-view class="page" scroll-y enable-flex enhanced show-scrollbar="{{false}}">
+
+  <!-- 分类标签 -->
+  <scroll-view class="tab-bar" scroll-x show-scrollbar="{{false}}">
+    <view
+      class="tab-item {{activeCategory === 'all' ? 'tab-active' : ''}}"
+      bindtap="switchCategory"
+      data-key="all"
+    >
+      全部
+    </view>
+    <view
+      class="tab-item {{activeCategory === item.key ? 'tab-active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="key"
+      bindtap="switchCategory"
+      data-key="{{item.key}}"
+    >
+      {{item.icon}} {{item.label}}
+    </view>
+  </scroll-view>
+
+  <!-- 菜谱网格 -->
+  <view wx:if="{{recipes.length > 0}}" class="recipe-grid">
+    <view
+      class="recipe-cell"
+      wx:for="{{recipes}}"
+      wx:key="id"
+      bindtap="goToDetail"
+      data-id="{{item.id}}"
+    >
+      <image class="cell-cover" src="{{item.coverImagePath || '/assets/default-cover.png'}}" mode="aspectFill" />
+      <view class="cell-info">
+        <text class="cell-name text-ellipsis">{{item.name}}</text>
+        <view class="cell-meta">
+          <text class="cell-tag">{{item.subcategory || item.category}}</text>
+          <text wx:if="{{item.prepTime}}">⏱ {{item.prepTime}}min</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:else
+    icon="🍳"
+    title="还没有菜谱"
+    description="去首页添加你的第一道菜吧"
+  />
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="goToAdd">+</view>
+
+  <view style="height: 120rpx;"></view>
+</scroll-view>

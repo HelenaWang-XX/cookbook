@@ -1,0 +1,41 @@
+<scroll-view class="page" scroll-y>
+  <view class="usage-card">
+    <text class="usage-title">存储空间</text>
+    <view class="progress-bar">
+      <view class="progress-fill {{showWarning ? 'fill-warn' : ''}}" style="width:{{ratio}}%"></view>
+    </view>
+    <text class="usage-text">{{usedMB}} MB / {{totalMB}} MB ({{ratio}}%)</text>
+    <text wx:if="{{showWarning}}" class="warn-text">⚠️ 空间紧张，建议清理步骤图</text>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" bindtap="onClearStepImages">
+      <text class="menu-icon">🖼️</text>
+      <view class="menu-info">
+        <text class="menu-label">清理步骤图</text>
+        <text class="menu-desc">保留封面图，删除所有步骤配图</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-title">备份与迁移</view>
+    <view class="menu-item" bindtap="onExport">
+      <text class="menu-icon">📤</text>
+      <view class="menu-info">
+        <text class="menu-label">导出菜谱数据</text>
+        <text class="menu-desc">将菜谱元数据复制到剪贴板（不含图片）</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onImport">
+      <text class="menu-icon">📥</text>
+      <view class="menu-info">
+        <text class="menu-label">导入菜谱数据</text>
+        <text class="menu-desc">从剪贴板合并导入（不覆盖已有）</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+</scroll-view>

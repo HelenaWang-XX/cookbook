@@ -1,0 +1,96 @@
+<!-- 搜索页 -->
+<view class="page">
+
+  <!-- 模式切换 -->
+  <view class="mode-toggle">
+    <view
+      class="mode-btn {{mode === 'byName' ? 'mode-active' : ''}}"
+      bindtap="switchMode"
+      data-mode="byName"
+    >按菜名搜</view>
+    <view
+      class="mode-btn {{mode === 'byIngredient' ? 'mode-active' : ''}}"
+      bindtap="switchMode"
+      data-mode="byIngredient"
+    >按食材搜</view>
+  </view>
+
+  <!-- 按菜名搜 -->
+  <view wx:if="{{mode === 'byName'}}" class="search-box">
+    <view class="input-wrap">
+      <text class="input-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="输入菜名或标签…"
+        value="{{query}}"
+        bindinput="onQueryInput"
+        focus="{{true}}"
+        confirm-type="search"
+      />
+      <text wx:if="{{query}}" class="clear-btn" bindtap="clearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 按食材搜 -->
+  <view wx:if="{{mode === 'byIngredient'}}" class="search-box">
+    <view class="input-wrap">
+      <text class="input-icon">🥬</text>
+      <input
+        class="search-input"
+        placeholder="输入食材名称，如：鸡蛋…"
+        value="{{ingredientInput}}"
+        bindinput="onIngredientInput"
+        bindconfirm="onIngredientConfirm"
+        confirm-type="done"
+      />
+      <text class="add-btn" bindtap="addIngredientTag">添加</text>
+    </view>
+    <!-- 食材标签 -->
+    <view wx:if="{{ingredientTags.length > 0}}" class="ingredient-tags">
+      <view
+        class="ing-tag"
+        wx:for="{{ingredientTags}}"
+        wx:key="*this"
+        bindtap="removeIngredientTag"
+        data-index="{{index}}"
+      >
+        {{item}} ✕
+      </view>
+    </view>
+    <view wx:if="{{ingredientTags.length > 0}}" class="tag-hint">已有食材，点击标签可移除 · 显示可做的菜</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{searched}}" class="results-section">
+    <view class="results-header">
+      <text class="results-count">找到 {{results.length}} 道菜</text>
+      <text wx:if="{{results.length > 0}}" class="clear-link" bindtap="clearSearch">清空</text>
+    </view>
+
+    <view wx:if="{{results.length > 0}}" class="results-list">
+      <view
+        class="result-item"
+        wx:for="{{results}}"
+        wx:key="id"
+        bindtap="goToDetail"
+        data-id="{{item.id}}"
+      >
+        <image class="result-thumb" src="{{item.coverImagePath || '/assets/default-cover.png'}}" mode="aspectFill" />
+        <view class="result-info">
+          <text class="result-name">{{item.name}}</text>
+          <view class="result-ingredients text-ellipsis">
+            <text wx:for="{{item.ingredients}}" wx:key="id" wx:for-item="ing">{{ing.canonicalName}} </text>
+          </view>
+        </view>
+        <text class="result-arrow">›</text>
+      </view>
+    </view>
+
+    <empty-state
+      wx:else
+      icon="🔍"
+      title="没有找到匹配的菜谱"
+      description="试试其他关键词"
+    />
+  </view>
+</view>

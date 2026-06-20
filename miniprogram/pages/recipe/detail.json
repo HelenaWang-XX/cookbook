@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "菜谱详情",
+  "usingComponents": {
+    "step-viewer": "/components/step-viewer/index",
+    "ingredient-list": "/components/ingredient-list/index"
+  }
+}

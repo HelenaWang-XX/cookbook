@@ -1,0 +1,84 @@
+<!-- 首页 Dashboard -->
+<scroll-view class="page" scroll-y enable-flex enhanced show-scrollbar="{{false}}">
+
+  <!-- 统计卡片 -->
+  <view class="stats-row">
+    <view class="stat-card" bindtap="goToShoppingList">
+      <text class="stat-num">{{shoppingListCount}}</text>
+      <text class="stat-label">待购菜谱</text>
+    </view>
+    <view class="stat-card" bindtap="goToImport">
+      <text class="stat-num stat-icon">🔗</text>
+      <text class="stat-label">网页导入</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{recipeCount}}</text>
+      <text class="stat-label">全部菜谱</text>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions">
+    <button class="action-btn action-primary" bindtap="goToAdd">✏️ 手动添加菜谱</button>
+    <button class="action-btn action-outline" bindtap="goToImport">🔗 从链接导入</button>
+  </view>
+
+  <!-- 分类概览 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">分类概览</text>
+    </view>
+    <scroll-view class="category-scroll" scroll-x show-scrollbar="{{false}}">
+      <view class="category-list">
+        <view
+          class="category-chip"
+          wx:for="{{categoryStats}}"
+          wx:key="key"
+          bindtap="goToCategory"
+          data-key="{{item.key}}"
+        >
+          <text class="chip-icon">{{item.icon}}</text>
+          <text class="chip-label" style="color:{{item.color}}">{{item.label}}</text>
+          <text class="chip-count">{{item.count}}道</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 最近添加 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">最近添加</text>
+      <text class="section-more" bindtap="goToAdd">查看全部 ›</text>
+    </view>
+
+    <view wx:if="{{recentRecipes.length > 0}}" class="recipe-list">
+      <view
+        class="recipe-row"
+        wx:for="{{recentRecipes}}"
+        wx:key="id"
+        bindtap="goToDetail"
+        data-id="{{item.id}}"
+      >
+        <image class="recipe-thumb" src="{{item.coverImagePath || '/assets/default-cover.png'}}" mode="aspectFill" />
+        <view class="recipe-info">
+          <text class="recipe-name">{{item.name}}</text>
+          <view class="recipe-meta">
+            <text class="meta-tag">{{item.category === 'meat' ? '荤菜' : item.category === 'vegetarian' ? '素菜' : item.category === 'seafood' ? '海鲜' : item.category === 'soup' ? '汤羹' : item.category === 'staple' ? '主食' : '甜品'}}</text>
+            <text wx:if="{{item.prepTime}}" class="meta-time">⏱ {{item.prepTime}}分钟</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty-state
+      wx:else
+      icon="📖"
+      title="还没有菜谱"
+      description="点击上方按钮添加你的第一道菜吧"
+    />
+  </view>
+
+  <!-- 底部安全距离 -->
+  <view class="safe-area-bottom" style="height: 40rpx;"></view>
+</scroll-view>

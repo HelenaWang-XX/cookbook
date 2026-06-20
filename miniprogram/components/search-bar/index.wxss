@@ -1,0 +1,4 @@
+.search-bar { display: flex; align-items: center; background: var(--color-bg); border-radius: var(--radius-round); padding: var(--space-xs) var(--space-md); border: 1rpx solid var(--color-border); }
+.icon { font-size: var(--font-lg); margin-right: var(--space-sm); }
+.input { flex: 1; font-size: var(--font-sm); }
+.clear { font-size: var(--font-sm); color: var(--color-text-hint); padding: 4rpx; }

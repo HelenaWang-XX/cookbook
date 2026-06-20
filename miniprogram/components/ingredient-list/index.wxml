@@ -1,0 +1,8 @@
+<view class="ingredient-list">
+  <ingredient-item
+    wx:for="{{ingredients}}"
+    wx:key="id"
+    ingredient="{{item}}"
+    showCheckbox="{{showCheckbox}}"
+  />
+</view>

@@ -1,0 +1,8 @@
+.page { min-height: 100vh; background: var(--color-bg); }
+.header { padding: var(--space-lg) var(--space-md); background: var(--color-bg-white); margin-bottom: var(--space-md); }
+.title { font-size: var(--font-xl); font-weight: 600; display: block; }
+.subtitle { font-size: var(--font-sm); color: var(--color-text-hint); margin-top: var(--space-xs); }
+.list { background: var(--color-bg-white); }
+.list-item { display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); border-bottom: 1rpx solid var(--color-divider); }
+.recipe-name { font-size: var(--font-md); }
+.original-text { font-size: var(--font-sm); color: var(--color-text-hint); }

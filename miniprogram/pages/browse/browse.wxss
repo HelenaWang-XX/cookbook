@@ -1,0 +1,81 @@
+.page {
+  height: 100vh;
+  padding-bottom: 100rpx;
+}
+
+/* 分类标签栏 */
+.tab-bar {
+  white-space: nowrap;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-white);
+  border-bottom: 1rpx solid var(--color-border);
+}
+.tab-item {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  margin-right: var(--space-sm);
+  border-radius: var(--radius-round);
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-divider);
+}
+.tab-active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* 菜谱网格 */
+.recipe-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: var(--space-sm);
+}
+.recipe-cell {
+  width: 50%;
+  padding: var(--space-xs);
+  box-sizing: border-box;
+}
+.cell-cover {
+  width: 100%;
+  height: 260rpx;
+  border-radius: var(--radius-md);
+  background: var(--color-divider);
+}
+.cell-info {
+  padding: var(--space-xs) var(--space-xs) 0;
+}
+.cell-name {
+  font-size: var(--font-md);
+  font-weight: 500;
+  display: block;
+}
+.cell-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  color: var(--color-text-hint);
+  margin-top: 4rpx;
+}
+.cell-tag {
+  background: var(--color-divider);
+  padding: 2rpx 8rpx;
+  border-radius: var(--radius-sm);
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 160rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(7, 193, 96, 0.3);
+  z-index: 100;
+}

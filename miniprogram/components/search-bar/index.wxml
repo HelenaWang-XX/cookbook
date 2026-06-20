@@ -1,0 +1,5 @@
+<view class="search-bar">
+  <text class="icon">🔍</text>
+  <input class="input" placeholder="{{placeholder}}" value="{{value}}" bindinput="onInput" bindconfirm="onConfirm" confirm-type="search" />
+  <text wx:if="{{value}}" class="clear" bindtap="onClear">✕</text>
+</view>

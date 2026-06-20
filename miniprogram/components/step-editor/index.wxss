@@ -1,0 +1,8 @@
+.step-editor { background: var(--color-bg-white); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-md); }
+.header { display: flex; justify-content: space-between; margin-bottom: var(--space-sm); }
+.num { font-weight: 700; color: var(--color-primary); }
+.actions { display: flex; gap: var(--space-md); font-size: var(--font-lg); }
+.del { color: var(--color-danger); }
+.textarea { width: 100%; font-size: var(--font-sm); min-height: 80rpx; }
+.img { width: 160rpx; height: 120rpx; border-radius: var(--radius-sm); margin-top: var(--space-sm); }
+.add-img { font-size: var(--font-sm); color: var(--color-primary); padding: var(--space-xs); margin-top: var(--space-sm); }

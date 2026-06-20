@@ -1,0 +1,12 @@
+<scroll-view class="page" scroll-y>
+  <view class="header">
+    <text class="title">{{canonicalName}}</text>
+    <text class="subtitle">来自以下菜谱：</text>
+  </view>
+  <view class="list">
+    <view class="list-item" wx:for="{{recipes}}" wx:key="recipeId">
+      <text class="recipe-name">{{item.recipeName}}</text>
+      <text class="original-text">{{item.originalText}}</text>
+    </view>
+  </view>
+</scroll-view>

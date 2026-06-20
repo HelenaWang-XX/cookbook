@@ -1,0 +1,5 @@
+<view class="empty-state flex-center flex-col">
+  <text class="empty-icon">{{icon}}</text>
+  <text class="empty-title">{{title}}</text>
+  <text wx:if="{{description}}" class="empty-desc">{{description}}</text>
+</view>

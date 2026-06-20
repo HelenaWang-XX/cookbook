@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="card">
+    <text class="title">从链接导入菜谱</text>
+    <text class="desc">支持 下厨房、美食天下、豆果美食 等菜谱网站的链接</text>
+
+    <view class="input-wrap">
+      <input
+        class="url-input"
+        placeholder="粘贴菜谱链接…"
+        value="{{url}}"
+        bindinput="onUrlInput"
+        disabled="{{loading}}"
+      />
+      <text class="paste-btn" bindtap="onPaste">📋 粘贴</text>
+    </view>
+
+    <text wx:if="{{error}}" class="error-msg">{{error}}</text>
+
+    <button
+      class="extract-btn"
+      bindtap="onExtract"
+      loading="{{loading}}"
+      disabled="{{!isOnline}}"
+    >
+      {{loading ? '解析中…' : (isOnline ? '🔍 开始解析' : '需要网络连接')}}
+    </button>
+
+    <view wx:if="{{!isOnline}}" class="offline-hint">
+      当前处于离线状态，网页导入需要网络连接
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="title">提示</text>
+    <text class="desc">• 视频菜谱只能保存为参考链接\n• 图片中的食材需手工核对\n• 导入后请检查食材名称和用量</text>
+  </view>
+</view>

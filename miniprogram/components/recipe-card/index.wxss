@@ -1,0 +1,9 @@
+.card { background: var(--color-bg-white); border-radius: var(--radius-md); overflow: hidden; }
+.card.grid .cover { width: 100%; height: 260rpx; display: block; background: var(--color-divider); }
+.card.list { display: flex; gap: var(--space-md); padding: var(--space-sm); }
+.card.list .cover { width: 120rpx; height: 90rpx; border-radius: var(--radius-sm); background: var(--color-divider); flex-shrink: 0; }
+.info { padding: var(--space-xs) var(--space-sm) var(--space-sm); }
+.name { font-size: var(--font-md); font-weight: 500; display: block; }
+.meta { display: flex; gap: var(--space-sm); margin-top: 4rpx; }
+.cat { font-size: var(--font-xs); }
+.time { font-size: var(--font-xs); color: var(--color-text-hint); }

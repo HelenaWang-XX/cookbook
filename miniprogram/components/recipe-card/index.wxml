@@ -1,0 +1,10 @@
+<view class="card {{mode}}" bindtap="onTap">
+  <image class="cover" src="{{recipe.coverImagePath || '/assets/default-cover.png'}}" mode="aspectFill" />
+  <view class="info">
+    <text class="name text-ellipsis">{{recipe.name}}</text>
+    <view class="meta">
+      <text class="cat" style="color:{{categoryColor}}">{{categoryLabel}}</text>
+      <text wx:if="{{recipe.prepTime}}" class="time">⏱ {{recipe.prepTime}}min</text>
+    </view>
+  </view>
+</view>

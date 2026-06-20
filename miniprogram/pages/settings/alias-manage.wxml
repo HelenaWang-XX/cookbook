@@ -1,0 +1,15 @@
+<scroll-view class="page" scroll-y>
+  <view class="toolbar">
+    <text class="toolbar-text">{{aliases.length}} 条别名</text>
+    <text class="add-btn" bindtap="onAdd">+ 添加</text>
+  </view>
+  <view class="list">
+    <view class="item" wx:for="{{aliases}}" wx:key="canonicalName">
+      <view class="item-main">
+        <text class="canonical">{{item.canonicalName}}</text>
+        <text class="aliases">{{item.aliases}}</text>
+      </view>
+      <text class="delete" data-name="{{item.canonicalName}}" bindtap="onDelete">🗑</text>
+    </view>
+  </view>
+</scroll-view>

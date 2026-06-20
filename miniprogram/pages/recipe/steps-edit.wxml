@@ -1,0 +1,28 @@
+<scroll-view class="page" scroll-y>
+  <view class="step-card" wx:for="{{steps}}" wx:key="id">
+    <view class="step-header">
+      <text class="step-num">步骤 {{item.order}}</text>
+      <view class="step-actions">
+        <text data-index="{{index}}" bindtap="moveUp">↑</text>
+        <text data-index="{{index}}" bindtap="moveDown">↓</text>
+        <text class="delete" data-index="{{index}}" bindtap="removeStep">🗑</text>
+      </view>
+    </view>
+    <textarea
+      class="step-textarea"
+      placeholder="输入步骤说明…"
+      value="{{item.description}}"
+      data-index="{{index}}"
+      bindinput="onStepInput"
+      auto-height
+    />
+    <view class="step-img-row">
+      <image wx:if="{{item.imagePath}}" class="step-img" src="{{item.imagePath}}" mode="aspectFill" data-index="{{index}}" bindtap="onStepImage" />
+      <view wx:else class="step-add-img" data-index="{{index}}" bindtap="onStepImage">+ 添加图片</view>
+    </view>
+  </view>
+
+  <view class="add-bar"><button class="add-btn" bindtap="addStep">+ 添加步骤</button></view>
+  <view class="save-bar"><button class="save-btn" bindtap="onSave">保存步骤</button></view>
+  <view style="height: 40rpx;"></view>
+</scroll-view>

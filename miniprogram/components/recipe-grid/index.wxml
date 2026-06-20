@@ -1,0 +1,5 @@
+<view class="grid">
+  <view class="cell" wx:for="{{recipes}}" wx:key="id">
+    <recipe-card recipe="{{item}}" mode="grid" bindtap="onTap" />
+  </view>
+</view>

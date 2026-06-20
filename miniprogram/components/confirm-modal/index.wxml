@@ -1,0 +1,10 @@
+<view wx:if="{{visible}}" class="mask" bindtap="onCancel">
+  <view class="modal" catchtap="">
+    <text class="title">{{title}}</text>
+    <text wx:if="{{content}}" class="content">{{content}}</text>
+    <view class="actions">
+      <text class="btn cancel" bindtap="onCancel">{{cancelText}}</text>
+      <text class="btn confirm" bindtap="onConfirm">{{confirmText}}</text>
+    </view>
+  </view>
+</view>

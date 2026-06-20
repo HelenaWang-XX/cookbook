@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "编辑菜谱",
+  "usingComponents": {
+    "image-uploader": "/components/image-uploader/index",
+    "tag-input": "/components/tag-input/index"
+  }
+}

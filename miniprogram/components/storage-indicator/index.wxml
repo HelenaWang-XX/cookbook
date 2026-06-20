@@ -1,0 +1,6 @@
+<view class="indicator">
+  <view class="bar">
+    <view class="fill {{showWarning ? 'warn' : ''}}" style="width:{{ratio}}%"></view>
+  </view>
+  <text class="text {{showWarning ? 'warn-text' : ''}}">存储用量 {{ratio}}%</text>
+</view>

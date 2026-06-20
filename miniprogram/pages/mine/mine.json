@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "storage-indicator": "/components/storage-indicator/index"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "my-cookbook",
+  "version": "1.0.0",
+  "description": "个人菜谱管理小程序",
+  "main": "app.ts",
+  "scripts": {
+    "compile": "tsc",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "weui-miniprogram": "^1.2.10"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^3.12.2",
+    "sharp": "^0.35.1",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "miniprogram",
+    "cookbook",
+    "recipe"
+  ],
+  "license": "MIT"
+}

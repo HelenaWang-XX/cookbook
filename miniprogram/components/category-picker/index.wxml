@@ -1,0 +1,11 @@
+<scroll-view class="picker" scroll-x show-scrollbar="{{false}}">
+  <view
+    class="chip {{value === item.key ? 'active' : ''}}"
+    wx:for="{{categories}}"
+    wx:key="key"
+    bindtap="onSelect"
+    data-key="{{item.key}}"
+  >
+    {{item.icon}} {{item.label}}
+  </view>
+</scroll-view>

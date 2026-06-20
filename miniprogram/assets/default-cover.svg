@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#F0F0F0"/>
+  <text x="200" y="130" text-anchor="middle" font-size="64" fill="#CCCCCC">🍳</text>
+  <text x="200" y="180" text-anchor="middle" font-size="16" fill="#CCCCCC" font-family="sans-serif">暂无图片</text>
+</svg>

@@ -1,0 +1,50 @@
+<!-- 购物清单页 -->
+<scroll-view class="page" scroll-y>
+
+  <!-- 操作栏 -->
+  <view class="toolbar" wx:if="{{mergedList.length > 0}}">
+    <view class="toolbar-left">
+      <view class="check-all" bindtap="onToggleAll">
+        <view class="checkbox {{allChecked ? 'checked' : ''}}">
+          <text wx:if="{{allChecked}}">✓</text>
+        </view>
+        <text>全选</text>
+      </view>
+      <text class="toolbar-count">{{mergedList.length}} 项</text>
+    </view>
+    <view class="toolbar-actions">
+      <text class="toolbar-link" bindtap="onClearChecked">清空勾选</text>
+      <text class="toolbar-link danger" bindtap="onClearAll">清空清单</text>
+    </view>
+  </view>
+
+  <!-- 清单列表 -->
+  <view wx:if="{{mergedList.length > 0}}" class="list">
+    <view
+      class="list-item {{item.checked ? 'item-checked' : ''}}"
+      wx:for="{{mergedList}}"
+      wx:key="canonicalName"
+    >
+      <view class="item-check" bindtap="onToggleItem" data-name="{{item.canonicalName}}" data-checked="{{item.checked}}">
+        <view class="checkbox {{item.checked ? 'checked' : ''}}">
+          <text wx:if="{{item.checked}}">✓</text>
+        </view>
+      </view>
+      <view class="item-info" bindtap="showMergeLog" data-name="{{item.canonicalName}}">
+        <text class="item-name">{{item.canonicalName}}</text>
+        <text class="item-amount">{{item.baseQuantity}}{{item.unit || ''}}</text>
+        <text wx:if="{{item.baseQuantity === null}}" class="item-amount-raw">（{{item.rawAmounts}}）</text>
+      </view>
+      <text class="item-arrow">›</text>
+    </view>
+  </view>
+
+  <empty-state
+    wx:else
+    icon="🛒"
+    title="购物清单是空的"
+    description="在菜谱详情页点击「加入购物清单」来添加"
+  />
+
+  <view style="height: 40rpx;"></view>
+</scroll-view>

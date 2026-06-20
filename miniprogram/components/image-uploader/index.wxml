@@ -1,0 +1,8 @@
+<view class="uploader" style="width:{{width}}rpx;height:{{height}}rpx;">
+  <image wx:if="{{src}}" class="img" src="{{src}}" mode="aspectFill" bindtap="onChoose" />
+  <view wx:else class="placeholder" bindtap="onChoose">
+    <text class="icon">📷</text>
+    <text class="text">上传图片</text>
+  </view>
+  <text wx:if="{{src}}" class="remove" bindtap="onRemove">✕</text>
+</view>

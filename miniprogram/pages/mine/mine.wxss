@@ -1,0 +1,78 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: 100rpx;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-white);
+  padding: var(--space-xl) var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+.header-stat {
+  flex: 1;
+  text-align: center;
+}
+.header-num {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  display: block;
+}
+.header-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-hint);
+  margin-top: var(--space-xs);
+}
+.header-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background: var(--color-border);
+}
+
+.storage-bar {
+  margin: 0 var(--space-md) var(--space-md);
+  background: var(--color-bg-white);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.menu-section {
+  margin-bottom: var(--space-md);
+}
+.menu-title {
+  font-size: var(--font-xs);
+  color: var(--color-text-hint);
+  padding: 0 var(--space-md);
+  margin-bottom: var(--space-xs);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--color-bg-white);
+  padding: var(--space-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+.menu-item:last-child {
+  border-bottom: none;
+}
+.menu-icon {
+  font-size: var(--font-xl);
+}
+.menu-label {
+  flex: 1;
+  font-size: var(--font-md);
+}
+.menu-badge {
+  background: var(--color-danger);
+  color: #fff;
+  font-size: var(--font-xs);
+  padding: 2rpx 12rpx;
+  border-radius: var(--radius-round);
+}
+.menu-arrow {
+  font-size: var(--font-lg);
+  color: var(--color-text-hint);
+}

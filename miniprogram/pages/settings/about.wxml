@@ -1,0 +1,8 @@
+<view class="page flex-center flex-col">
+  <text class="logo">🍳</text>
+  <text class="app-name">我的菜谱</text>
+  <text class="version">v1.0.0</text>
+  <view class="desc-card">
+    <text class="desc">个人菜谱管理工具\n\n• 手动录入 & 网页抓取\n• 分类浏览 & 双向搜索\n• 智能购物清单合并\n• 食材标准化 & 别名管理\n• 本地存储，离线可用</text>
+  </view>
+</view>

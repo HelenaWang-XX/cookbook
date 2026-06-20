@@ -1,0 +1,26 @@
+<scroll-view class="page" scroll-y>
+  <view class="header">以下信息已自动解析，请校对修改后保存</view>
+
+  <view class="form-section">
+    <text class="label">菜名</text>
+    <input class="input" value="{{name}}" bindinput="onNameInput" />
+
+    <text class="label">分类</text>
+    <picker mode="selector" range="{{categories}}" range-key="label" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="picker-val">{{categories[categoryIndex].label}}</view>
+    </picker>
+
+    <text class="label">食材（可修改）</text>
+    <view wx:for="{{ingredientTexts}}" wx:key="*this" class="edit-row">
+      <input class="input" value="{{item}}" data-index="{{index}}" bindinput="onIngredientInput" />
+    </view>
+
+    <text class="label">步骤（可修改）</text>
+    <view wx:for="{{stepTexts}}" wx:key="*this" class="edit-row">
+      <text class="step-num">{{index + 1}}</text>
+      <textarea class="step-input" value="{{item}}" data-index="{{index}}" bindinput="onStepInput" auto-height />
+    </view>
+  </view>
+
+  <view class="save-bar"><button class="save-btn" bindtap="onSave" loading="{{saving}}">确认保存</button></view>
+</scroll-view>

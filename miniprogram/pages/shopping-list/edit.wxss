@@ -1,0 +1,6 @@
+.page { min-height: 100vh; background: var(--color-bg); }
+.list { background: var(--color-bg-white); margin-top: var(--space-md); }
+.list-item { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); border-bottom: 1rpx solid var(--color-divider); }
+.thumb { width: 80rpx; height: 60rpx; border-radius: var(--radius-sm); background: var(--color-divider); flex-shrink: 0; }
+.name { flex: 1; font-size: var(--font-md); }
+.remove { font-size: var(--font-sm); color: var(--color-danger); }

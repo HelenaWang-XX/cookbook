@@ -1,0 +1,9 @@
+<view class="tag-input">
+  <view class="tags">
+    <view class="tag" wx:for="{{tags}}" wx:key="*this">
+      {{item}}
+      <text class="tag-close" data-index="{{index}}" bindtap="removeTag">✕</text>
+    </view>
+  </view>
+  <input class="input" placeholder="添加标签…" value="{{inputValue}}" bindinput="onInput" bindconfirm="addTag" confirm-type="done" />
+</view>

@@ -1,0 +1,13 @@
+<view class="step-editor">
+  <view class="header">
+    <text class="num">步骤 {{index + 1}}</text>
+    <view class="actions">
+      <text bindtap="onMoveUp">↑</text>
+      <text bindtap="onMoveDown">↓</text>
+      <text class="del" bindtap="onRemove">✕</text>
+    </view>
+  </view>
+  <textarea class="textarea" value="{{step.description}}" placeholder="描述步骤…" bindinput="onInput" auto-height />
+  <image wx:if="{{step.imagePath}}" class="img" src="{{step.imagePath}}" mode="aspectFill" bindtap="onImage" />
+  <view wx:else class="add-img" bindtap="onImage">+ 添加图片</view>
+</view>

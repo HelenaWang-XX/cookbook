@@ -1,0 +1,6 @@
+.indicator { }
+.bar { height: 12rpx; background: var(--color-divider); border-radius: 6rpx; overflow: hidden; margin-bottom: var(--space-xs); }
+.fill { height: 100%; background: var(--color-primary); border-radius: 6rpx; transition: width 0.3s; }
+.fill.warn { background: var(--color-danger); }
+.text { font-size: var(--font-xs); color: var(--color-text-hint); }
+.warn-text { color: var(--color-danger); }

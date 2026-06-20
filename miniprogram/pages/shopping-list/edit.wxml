@@ -1,0 +1,12 @@
+<scroll-view class="page" scroll-y>
+  <view wx:if="{{recipes.length > 0}}" class="list">
+    <view class="list-item" wx:for="{{recipes}}" wx:key="id">
+      <image class="thumb" src="{{item.coverImagePath || '/assets/default-cover.png'}}" mode="aspectFill" />
+      <text class="name">{{item.name}}</text>
+      <text class="remove" data-id="{{item.id}}" bindtap="removeRecipe">移除</text>
+    </view>
+  </view>
+  <view wx:else class="flex-center" style="padding:80rpx;">
+    <text>还没有加入任何菜谱</text>
+  </view>
+</scroll-view>
