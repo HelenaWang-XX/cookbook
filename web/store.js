@@ -110,7 +110,31 @@ function searchByIngredients(names){
 
 // ====== Shopping list IDs ======
 function getShopIds(){return DB.get('shop_ids')||[]}
-function addToShopList(id){const ids=getShopIds();if(!ids.includes(id)){ids.push(id);DB.set('shop_ids',ids)}}
+function addToShopList(id){
+  const ids=getShopIds();
+  if(!ids.includes(id)){
+    ids.push(id);
+    DB.set('shop_ids',ids);
+  }
+  // 确保该菜谱在 shop_recipe_checked 中（已勾选状态）
+  var checked=DB.get('shop_recipe_checked');
+  if(checked){
+    if(!checked.includes(id)){checked.push(id);DB.set('shop_recipe_checked',checked)}
+  }
+  // 清除该菜谱食材的排除状态
+  var recipe=getRecipeById(id);
+  if(recipe){
+    var excluded=getShopExcluded();
+    var changed=false;
+    for(var i=excluded.length-1;i>=0;i--){
+      if(recipe.ingredients.some(function(ing){return ing.canonicalName===excluded[i]})){
+        excluded.splice(i,1);
+        changed=true;
+      }
+    }
+    if(changed)DB.set('shop_excluded',excluded);
+  }
+}
 function removeFromShopList(id){DB.set('shop_ids',getShopIds().filter(i=>i!==id))}
 function clearShopList(){DB.set('shop_ids',[]);DB.remove('shop_checked');DB.remove('shop_excluded');DB.remove('shop_recipe_checked')}
 
@@ -126,7 +150,24 @@ function toggleRecipeCheck(recipeId){
   const checked=DB.get('shop_recipe_checked');
   let list=checked&&checked.length?[...checked]:[...getShopIds()];
   const idx=list.indexOf(recipeId);
-  if(idx>=0)list.splice(idx,1);else list.push(recipeId);
+  if(idx>=0){
+    list.splice(idx,1); // 取消勾选
+  }else{
+    list.push(recipeId); // 重新勾选 → 恢复该菜谱的食材
+    // 从排除列表中移除此菜谱用到的食材
+    var recipe=getRecipeById(recipeId);
+    if(recipe){
+      var excluded=getShopExcluded();
+      var changed=false;
+      for(var ei=excluded.length-1;ei>=0;ei--){
+        if(recipe.ingredients.some(function(ing){return ing.canonicalName===excluded[ei]})){
+          excluded.splice(ei,1);
+          changed=true;
+        }
+      }
+      if(changed)DB.set('shop_excluded',excluded);
+    }
+  }
   DB.set('shop_recipe_checked',list);
 }
 function areAllRecipesChecked(){
