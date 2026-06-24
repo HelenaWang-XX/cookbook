@@ -1,0 +1,20 @@
+{
+  "envId": "helena0123-d6gtjj4upe60b94f8",
+  "region": "ap-guangzhou",
+  "framework": {
+    "name": "cookbook",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "entry": "./",
+          "index": "index.html",
+          "404": "index.html",
+          "env": {
+            "TCB_ENV_ID": "helena0123-d6gtjj4upe60b94f8"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /** 应用初始化 */
 (async function(){
-  // 1. 先尝试从共享服务器拉取数据
-  await DB.syncFromServer();
+  // 1. 先尝试从 CloudBase 云端拉取数据
+  await DB.syncFromCloud();
 
   // 1b. 迁移旧数据：清除已废弃的字段
   var allRecipes=getRecipes();
