@@ -1,109 +1,148 @@
-/** 数据存储层 — 支持本地 localStorage 和共享服务器双模式 */
-const DB = {
-  _cache: {}, // 内存缓存，避免频繁读 localStorage
+/** 数据存储层 — localStorage + CloudBase 云端同步 */
+const CLOUD_ENV = 'helena0123-d6gtjj4upe60b94f8';
+const DOC_ID = 'main_data';
 
-  /** 读取 */
-  get(k) {
-    // 优先内存
-    if (this._cache[k] !== undefined) return this._cache[k];
-    try {
-      const v = localStorage.getItem(k);
-      const val = v ? JSON.parse(v) : null;
-      this._cache[k] = val;
-      return val;
-    } catch { return null }
-  },
+var _cloudDb = null; // CloudBase 数据库实例
+var _syncEnabled = false;
+var _syncReady = false;
+var _pendingOps = []; // 离线时的待同步操作
 
-  /** 写入 */
-  set(k, v) {
-    this._cache[k] = v;
-    try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { alert('存储空间不足！请清理数据。') }
-    // 如果有共享服务器，异步推送
-    if (window.__SERVER_SYNC__) this._syncToServer();
-  },
+/** 初始化 CloudBase */
+function initCloud() {
+  try {
+    if (typeof cloudbase === 'undefined') return;
+    var app = cloudbase.init({ env: CLOUD_ENV });
+    // 开启匿名登录（需要云开发控制台启用该能力）
+    app.auth({ persistence: 'local' }).signInAnonymously().then(function() {
+      _cloudDb = app.database();
+      _syncEnabled = true;
+      console.log('☁️ CloudBase 已连接（匿名登录）');
+      syncFromCloud(); // 连接后自动拉取数据
+    }).catch(function(e) {
+      console.log('☁️ 匿名登录失败，使用本地存储:', e.message);
+    });
+  } catch (e) {
+    console.log('☁️ CloudBase 不可用，使用本地存储');
+    _syncEnabled = false;
+  }
+}
 
-  /** 删除 */
-  remove(k) {
-    delete this._cache[k];
-    localStorage.removeItem(k);
-    if (window.__SERVER_SYNC__) this._syncToServer();
-  },
+// 页面加载后自动初始化
+setTimeout(initCloud, 500);
 
-  /** 全量同步到服务器 */
-  async _syncToServer() {
-    try {
-      const data = {};
-      // 收集所有本小程序用到的 key
-      for (const key of ['recipes', 'shop_ids', 'shop_checked', 'shop_excluded', 'custom_cats', 'custom_subcats']) {
-        const val = localStorage.getItem(key);
-        if (val) data[key] = JSON.parse(val);
-      }
-      await fetch(window.__SERVER_URL__ + '/api/data', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+// ====== 本地存储（localStorage 兜底） ======
+var _cache = {};
+
+function localGet(k) {
+  if (_cache[k] !== undefined) return _cache[k];
+  try { var v = localStorage.getItem(k); var val = v ? JSON.parse(v) : null; _cache[k] = val; return val }
+  catch { return null }
+}
+function localSet(k, v) {
+  _cache[k] = v;
+  try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { alert('存储空间不足！请清理数据。') }
+  syncToCloud(); // 每次写入触发同步
+}
+function localRemove(k) {
+  delete _cache[k];
+  localStorage.removeItem(k);
+  syncToCloud();
+}
+
+// ====== CloudBase 同步 ======
+var _syncTimer = null;
+var _isSyncing = false;
+
+/** 将本地数据推送到云端 */
+function syncToCloud() {
+  if (!_syncEnabled || !_cloudDb) return;
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(doSync, 500); // 防抖
+}
+
+function doSync() {
+  if (_isSyncing) return;
+  _isSyncing = true;
+  try {
+    var data = {};
+    ['recipes', 'shop_ids', 'shop_checked', 'shop_excluded', 'shop_recipe_checked', 'custom_cats', 'custom_subcats']
+      .forEach(function(k) {
+        var v = localStorage.getItem(k);
+        if (v) data[k] = JSON.parse(v);
       });
-    } catch (e) {
-      // 服务器不可用时静默降级到 localStorage
-      console.warn('同步到服务器失败，使用本地存储:', e.message);
-    }
-  },
+    _cloudDb.collection('cookbook_data').doc(DOC_ID).set(data)
+      .then(function() { _isSyncing = false })
+      .catch(function(e) { _isSyncing = false; console.warn('☁️ 推送失败:', e.message) });
+  } catch(e) { _isSyncing = false }
+}
 
-  /** 从服务器拉取初始数据（首次加载时调用） */
-  async syncFromServer() {
-    if (!window.__SERVER_SYNC__) return;
-    try {
-      const resp = await fetch(window.__SERVER_URL__ + '/api/data');
-      const data = await resp.json();
-      let changed = false;
-      for (const [key, val] of Object.entries(data)) {
-        // 只在本地没有时取服务器数据，或以后者为准（可改为合并逻辑）
-        const local = localStorage.getItem(key);
-        if (!local || JSON.parse(local).length === 0) {
-          localStorage.setItem(key, JSON.stringify(val));
-          this._cache[key] = val;
-          changed = true;
+/** 从云端拉取数据到本地 */
+function syncFromCloud() {
+  if (!_syncEnabled || !_cloudDb) return Promise.resolve();
+  return _cloudDb.collection('cookbook_data').doc(DOC_ID).get()
+    .then(function(res) {
+      if (res.data && res.data.length > 0) {
+        var cloudData = res.data[0];
+        var changed = false;
+        Object.keys(cloudData).forEach(function(k) {
+          if (k === '_id') return;
+          var localVal = localStorage.getItem(k);
+          var cloudVal = JSON.stringify(cloudData[k]);
+          // 本地无数据或本地数据为空时，用云端数据
+          if (!localVal || localVal === '[]' || localVal === '{}') {
+            localStorage.setItem(k, cloudVal);
+            _cache[k] = cloudData[k];
+            changed = true;
+          }
+        });
+        if (changed) {
+          console.log('☁️ 已从云端同步');
+          if (window.renderHome) window.renderHome();
+          if (window.renderMine) window.renderMine();
+          if (window.renderShopList) window.renderShopList();
         }
       }
-      if (changed) {
-        console.log('📡 已从服务器同步数据');
-        // 通知 UI 刷新
-        if (window.renderHome) window.renderHome();
-        if (window.renderMine) window.renderMine();
-      }
-    } catch (e) {
-      console.log('📡 服务器同步不可用，使用本地存储');
-    }
-  }
+    })
+    .catch(function(e) {
+      console.log('☁️ 拉取失败，使用本地数据:', e.message);
+    });
+}
+
+// ====== DB 接口（兼容原有调用方式） ======
+var DB = {
+  get: localGet,
+  set: localSet,
+  remove: localRemove,
+  syncFromCloud: syncFromCloud,
 };
 
 // ====== Recipe CRUD ======
 function getRecipes(){return DB.get('recipes')||[]}
-function getRecipeById(id){return getRecipes().find(r=>r.id===id)}
+function getRecipeById(id){return getRecipes().find(function(r){return r.id===id})}
 function saveRecipes(arr){DB.set('recipes',arr)}
 
 function createRecipe(input){
-  const now=Date.now();
-  const r={...input,id:uid(),createdAt:now,updatedAt:now};
-  const all=getRecipes();all.unshift(r);saveRecipes(all);return r
+  var now=Date.now();
+  var r={...input,id:uid(),createdAt:now,updatedAt:now};
+  var all=getRecipes();all.unshift(r);saveRecipes(all);return r
 }
 function updateRecipe(id,input){
-  const all=getRecipes();const i=all.findIndex(r=>r.id===id);
+  var all=getRecipes();var i=all.findIndex(function(r){return r.id===id});
   if(i===-1)return null;
   all[i]={...all[i],...input,updatedAt:Date.now()};saveRecipes(all);return all[i]
 }
 function deleteRecipe(id){
-  const all=getRecipes();const r=all.find(r=>r.id===id);
+  var all=getRecipes();var r=all.find(function(r){return r.id===id});
   if(!r)return!1;
-  saveRecipes(all.filter(r=>r.id!==id));
+  saveRecipes(all.filter(function(r2){return r2.id!==id}));
   removeFromShopList(id);return!0
 }
-function searchByName(q){return getRecipes().filter(r=>fuzzyMatch(q,r.name)||r.tags.some(t=>fuzzyMatch(q,t)))}
+function searchByName(q){return getRecipes().filter(function(r){return fuzzyMatch(q,r.name)||r.tags.some(function(t){return fuzzyMatch(q,t)})})}
 function searchByIngredients(names){
-  const ns=names.map(n=>n.trim().toLowerCase());
-  return getRecipes().filter(r=>{
-    let m=0;
-    for(const ing of r.ingredients){if(ns.some(n=>ing.canonicalName.toLowerCase().includes(n)||n.includes(ing.canonicalName.toLowerCase())))m++}
+  var ns=names.map(function(n){return n.trim().toLowerCase()});
+  return getRecipes().filter(function(r){
+    var m=0;
+    for(var j=0;j<r.ingredients.length;j++){var ing=r.ingredients[j];if(ns.some(function(n){return ing.canonicalName.toLowerCase().includes(n)||n.includes(ing.canonicalName.toLowerCase())}))m++}
     return m>0
   })
 }
@@ -111,58 +150,47 @@ function searchByIngredients(names){
 // ====== Shopping list IDs ======
 function getShopIds(){return DB.get('shop_ids')||[]}
 function addToShopList(id){
-  const ids=getShopIds();
-  if(!ids.includes(id)){
-    ids.push(id);
-    DB.set('shop_ids',ids);
-  }
-  // 确保该菜谱在 shop_recipe_checked 中（已勾选状态）
+  var ids=getShopIds();
+  if(!ids.includes(id)){ids.push(id);DB.set('shop_ids',ids)}
   var checked=DB.get('shop_recipe_checked');
-  if(checked){
-    if(!checked.includes(id)){checked.push(id);DB.set('shop_recipe_checked',checked)}
-  }
-  // 清除该菜谱食材的排除状态
+  if(checked&&!checked.includes(id)){checked.push(id);DB.set('shop_recipe_checked',checked)}
   var recipe=getRecipeById(id);
   if(recipe){
     var excluded=getShopExcluded();
     var changed=false;
     for(var i=excluded.length-1;i>=0;i--){
       if(recipe.ingredients.some(function(ing){return ing.canonicalName===excluded[i]})){
-        excluded.splice(i,1);
-        changed=true;
+        excluded.splice(i,1);changed=true;
       }
     }
     if(changed)DB.set('shop_excluded',excluded);
   }
 }
-function removeFromShopList(id){DB.set('shop_ids',getShopIds().filter(i=>i!==id))}
+function removeFromShopList(id){DB.set('shop_ids',getShopIds().filter(function(i){return i!==id}))}
 function clearShopList(){DB.set('shop_ids',[]);DB.remove('shop_checked');DB.remove('shop_excluded');DB.remove('shop_recipe_checked')}
 
-// ====== Per-recipe toggle (在购物清单中临时勾选/取消) ======
+// ====== Recipe toggle ======
 function getCheckedRecipeIds(){
-  const all=getShopIds();
-  const checked=DB.get('shop_recipe_checked');
-  // 默认全部选中
+  var all=getShopIds();
+  var checked=DB.get('shop_recipe_checked');
   if(!checked||!checked.length)return[...all];
-  return all.filter(id=>checked.includes(id));
+  return all.filter(function(id){return checked.includes(id)});
 }
 function toggleRecipeCheck(recipeId){
-  const checked=DB.get('shop_recipe_checked');
-  let list=checked&&checked.length?[...checked]:[...getShopIds()];
-  const idx=list.indexOf(recipeId);
+  var checked=DB.get('shop_recipe_checked');
+  var list=checked&&checked.length?[...checked]:[...getShopIds()];
+  var idx=list.indexOf(recipeId);
   if(idx>=0){
-    list.splice(idx,1); // 取消勾选
+    list.splice(idx,1);
   }else{
-    list.push(recipeId); // 重新勾选 → 恢复该菜谱的食材
-    // 从排除列表中移除此菜谱用到的食材
+    list.push(recipeId);
     var recipe=getRecipeById(recipeId);
     if(recipe){
       var excluded=getShopExcluded();
       var changed=false;
       for(var ei=excluded.length-1;ei>=0;ei--){
         if(recipe.ingredients.some(function(ing){return ing.canonicalName===excluded[ei]})){
-          excluded.splice(ei,1);
-          changed=true;
+          excluded.splice(ei,1);changed=true;
         }
       }
       if(changed)DB.set('shop_excluded',excluded);
@@ -171,20 +199,19 @@ function toggleRecipeCheck(recipeId){
   DB.set('shop_recipe_checked',list);
 }
 function areAllRecipesChecked(){
-  const all=getShopIds();
-  if(!all.length)return!0;
-  const checked=DB.get('shop_recipe_checked');
+  var all=getShopIds();if(!all.length)return!0;
+  var checked=DB.get('shop_recipe_checked');
   if(!checked||!checked.length)return!0;
-  return all.every(id=>checked.includes(id));
+  return all.every(function(id){return checked.includes(id)});
 }
 
 // ====== Excluded ingredients ======
 function getShopExcluded(){return DB.get('shop_excluded')||[]}
-function addShopExcluded(name){const s=getShopExcluded();if(!s.includes(name)){s.push(name);DB.set('shop_excluded',s)}}
+function addShopExcluded(name){var s=getShopExcluded();if(!s.includes(name)){s.push(name);DB.set('shop_excluded',s)}}
 function clearShopExcluded(){DB.remove('shop_excluded')}
 
-// ====== Clear all data ======
+// ====== Clear all ======
 function clearAllLocalData(){
-  ['recipes','shop_ids','shop_checked','shop_excluded','custom_cats','custom_subcats'].forEach(k=>{localStorage.removeItem(k);delete DB._cache[k]});
-  if(window.__SERVER_SYNC__) DB._syncToServer();
+  ['recipes','shop_ids','shop_checked','shop_excluded','shop_recipe_checked','custom_cats','custom_subcats'].forEach(function(k){localStorage.removeItem(k);delete _cache[k]});
+  syncToCloud();
 }
