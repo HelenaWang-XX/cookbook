@@ -1,5 +1,4 @@
-/** 数据存储层 — localStorage + GitHub 云同步 */
-var GITHUB_TOKEN = 'GITHUB_TOKEN';
+/** 数据存储层 — localStorage + GitHub Gist 云同步 */
 var GIST_ID = ''; // 首次同步时创建
 var _syncTimer = null;
 var _isSyncing = false;
@@ -25,7 +24,18 @@ function localRemove(k) {
 }
 
 // ====== 云端同步（通过 GitHub Gist API） ======
-var GH_HEADERS = { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json' };
+function getGithubToken() {
+  var token = localStorage.getItem('github_token');
+  if (!token) {
+    token = prompt('请输入 GitHub Token（在 github.com/settings/tokens 创建）\n需要勾选 repo + gist 权限：');
+    if (token) localStorage.setItem('github_token', token);
+  }
+  return token;
+}
+function ghHeaders() {
+  var token = getGithubToken();
+  return token ? { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' } : null;
+}
 
 function syncToCloud() {
   if (_syncTimer) clearTimeout(_syncTimer);
@@ -44,16 +54,16 @@ function collectSyncData() {
 
 function getGistId() {
   if (GIST_ID) return Promise.resolve(GIST_ID);
-  // 查找已有的 gist
-  return fetch('https://api.github.com/gists', { headers: GH_HEADERS }).then(function(r) { return r.json(); }).then(function(gists) {
+  var h = ghHeaders(); if (!h) return Promise.resolve(null);
+  return fetch('https://api.github.com/gists', { headers: h }).then(function(r) { return r.json(); }).then(function(gists) {
+    if (!Array.isArray(gists)) return null;
     for (var i = 0; i < gists.length; i++) {
       if (gists[i].description === 'cookbook-sync') { GIST_ID = gists[i].id; return GIST_ID; }
     }
-    // 没有则创建
     return fetch('https://api.github.com/gists', {
-      method: 'POST', headers: GH_HEADERS,
+      method: 'POST', headers: h,
       body: JSON.stringify({ description: 'cookbook-sync', public: false, files: { 'data.json': { content: '{}' } } })
-    }).then(function(r) { return r.json(); }).then(function(g) { GIST_ID = g.id; return GIST_ID; });
+    }).then(function(r) { return r.json(); }).then(function(g) { if (g.id) { GIST_ID = g.id; return GIST_ID; } return null; });
   });
 }
 
@@ -62,16 +72,18 @@ function doSync() {
   _isSyncing = true;
   var data = collectSyncData();
   if (Object.keys(data).length === 0) { _isSyncing = false; return; }
+  var h = ghHeaders(); if (!h) { _isSyncing = false; return; }
   var content = JSON.stringify(data, null, 2);
 
   getGistId().then(function(gistId) {
+    if (!gistId) { _isSyncing = false; return; }
     return fetch('https://api.github.com/gists/' + gistId, {
-      method: 'PATCH', headers: GH_HEADERS,
+      method: 'PATCH', headers: h,
       body: JSON.stringify({ files: { 'data.json': { content: content } } })
     });
-  }).then(function(r) { return r.json(); }).then(function(res) {
-    if (!res.message || res.message === 'ok') console.log('☁️ 已同步到云端');
-    else console.warn('☁️ 同步失败:', res.message);
+  }).then(function(r) { return r ? r.json() : null; }).then(function(res) {
+    if (res && !res.message) console.log('☁️ 已同步到云端');
+    else if (res) console.warn('☁️ 同步失败:', res.message);
     _isSyncing = false;
   }).catch(function(e) {
     console.log('☁️ 云端不可达，本地存储正常使用');
@@ -80,10 +92,12 @@ function doSync() {
 }
 
 function syncFromCloud() {
+  var h = ghHeaders(); if (!h) return Promise.resolve();
   return getGistId().then(function(gistId) {
-    return fetch('https://api.github.com/gists/' + gistId, { headers: GH_HEADERS });
-  }).then(function(r) { return r.json(); }).then(function(gist) {
-    if (!gist.files || !gist.files['data.json']) return;
+    if (!gistId) return null;
+    return fetch('https://api.github.com/gists/' + gistId, { headers: h });
+  }).then(function(r) { return r ? r.json() : null; }).then(function(gist) {
+    if (!gist || !gist.files || !gist.files['data.json']) return;
     var cloudData = JSON.parse(gist.files['data.json'].content);
     var changed = false;
     for (var k in cloudData) {
