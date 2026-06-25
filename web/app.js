@@ -1,7 +1,9 @@
 /** 应用初始化 */
 (async function(){
-  // 1. 先尝试从 CloudBase 云端拉取数据
-  await DB.syncFromCloud();
+  // 从云端拉取数据（覆盖本地）
+  DB.syncFromCloud();
+  // 推送本地数据到云端
+  setTimeout(function() { DB.pushToCloud(); }, 1000);
 
   // 1b. 迁移旧数据：清除已废弃的字段
   var allRecipes=getRecipes();
