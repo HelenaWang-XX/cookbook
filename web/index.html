@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="manifest" href="manifest.json">
 <title>我的菜谱</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -116,8 +119,8 @@
   <section id="page-edit" class="page sub-page">
     <div class="pg-header pg-header-blur"><span class="back" onclick="goBack()">‹</span> <span id="edit-title">添加菜谱</span></div>
     <div class="edit-form" id="edit-form"></div>
-    <div class="save-bar"><button class="btn btn-prim btn-lg" onclick="saveRecipe()">保存</button></div>
   </section>
+  <div id="save-bar" class="save-bar" style="display:none"><button class="btn btn-prim btn-lg" onclick="saveRecipe()">保存</button></div>
 
   <!-- ====== SHOPPING LIST (tab page, not sub-page) ====== -->
   <section id="page-shopping-list" class="page shop-page">
@@ -152,11 +155,11 @@
 
 </div><!-- #app -->
 
-<script src="utils.js?v=4"></script>
-<script src="store.js?v=3"></script>
-<script src="normalize.js?v=3"></script>
-<script src="shop.js?v=3"></script>
-<script src="ui.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="utils.js?v=8"></script>
+<script src="store.js?v=8"></script>
+<script src="normalize.js?v=8"></script>
+<script src="shop.js?v=8"></script>
+<script src="ui.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>

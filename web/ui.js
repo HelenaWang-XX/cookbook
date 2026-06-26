@@ -27,6 +27,7 @@ function switchTab(page){
   closeFabMenu();
   if(page==='home')renderHome();if(page==='browse')renderBrowse();
   if(page==='mine')renderMine();if(page==='shopping-list')renderShopList();
+  document.getElementById('save-bar')&&(document.getElementById('save-bar').style.display='none');
   window.scrollTo(0,0);
 }
 function page(name){
@@ -36,7 +37,10 @@ function page(name){
   if(el){el.classList.add('active');el.scrollTop=0}
   closeFabMenu();
   window.scrollTo(0,0);
-  if(name==='edit')renderEditForm();
+  // 显示/隐藏固定保存按钮
+  var sb=document.getElementById('save-bar');
+  if(name==='edit'){sb.style.display='block';renderEditForm()}
+  else{sb.style.display='none'}
   if(name==='import')renderImport();
   if(name==='edit-cats')renderEditCats();
   if(name==='shopping-list')renderShopList();
@@ -50,6 +54,7 @@ function goBack(){
   previousPage='home';currentPage=pg;
   if(pg==='home')renderHome();if(pg==='browse')renderBrowse();
   if(pg==='mine')renderMine();if(pg==='shopping-list')renderShopList();
+  document.getElementById('save-bar')&&(document.getElementById('save-bar').style.display='none');
   window.scrollTo(0,0);
 }
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
@@ -151,11 +156,19 @@ function closeBrowseSearch(){
   renderBrowseCards(browseActiveCat);
 }
 function doBrowseSearch(){
-  const q=document.getElementById('browse-search-input').value.trim();
+  var q=document.getElementById('browse-search-input').value.trim();
+  // 显示结果区（openBrowseSearch 设为 none 了）
+  var cards=document.getElementById('browse-cards');
+  cards.style.display='block';
   if(!q){renderBrowseCards(browseActiveCat);return}
-  const rs=searchByName(q);
-  const shopIds=getShopIds();
-  document.getElementById('browse-cards').innerHTML=rs.length?rs.map(r=>`
+  // 同时按菜名和食材搜索
+  var rsByName=searchByName(q);
+  var rsByIngr=searchByIngredients([q]);
+  // 合并去重
+  var seen={};var rs=[];
+  rsByName.concat(rsByIngr).forEach(function(r){if(!seen[r.id]){seen[r.id]=true;rs.push(r)}});
+  var shopIds=getShopIds();
+  cards.innerHTML=rs.length?rs.map(r=>`
     <div class="browse-card" onclick="openDetail('${r.id}')">
       ${r.coverImagePath?`<img class="browse-card-img" src="${r.coverImagePath}">`:`<div class="browse-card-img">🍳</div>`}
       <div class="browse-card-info">

@@ -70,23 +70,34 @@ function getGistId() {
 function doSync() {
   if (_isSyncing) return;
   _isSyncing = true;
-  var data = collectSyncData();
-  if (Object.keys(data).length === 0) { _isSyncing = false; return; }
+  var localCount = (localStorage.getItem('recipes')||'').split('"name"').length - 1;
   var h = ghHeaders(); if (!h) { _isSyncing = false; return; }
-  var content = JSON.stringify(data, null, 2);
 
   getGistId().then(function(gistId) {
     if (!gistId) { _isSyncing = false; return; }
-    return fetch('https://api.github.com/gists/' + gistId, {
-      method: 'PATCH', headers: h,
-      body: JSON.stringify({ files: { 'data.json': { content: content } } })
+    // 先查云端菜谱数量，本地不少于云端才推送，防止少覆盖多
+    return fetch('https://api.github.com/gists/' + gistId, { headers: h }).then(function(r) { return r.json(); }).then(function(gist) {
+      if (!gist.files || !gist.files['data.json']) return;
+      var cloudData = JSON.parse(gist.files['data.json'].content);
+      var cloudCount = (cloudData.recipes||[]).length;
+      if (cloudCount > localCount) {
+        console.log('☁️ 云端有' + cloudCount + '道菜，本地仅' + localCount + '道，跳过推送（防止覆盖）');
+        _isSyncing = false;
+        return;
+      }
+      // 推送本地数据
+      var data = collectSyncData();
+      var content = JSON.stringify(data, null, 2);
+      return fetch('https://api.github.com/gists/' + gistId, {
+        method: 'PATCH', headers: h,
+        body: JSON.stringify({ files: { 'data.json': { content: content } } })
+      }).then(function(r) { return r.json(); }).then(function(res) {
+        if (res && !res.message) console.log('☁️ 已同步到云端 (' + localCount + '道)');
+        _isSyncing = false;
+      });
     });
-  }).then(function(r) { return r ? r.json() : null; }).then(function(res) {
-    if (res && !res.message) console.log('☁️ 已同步到云端');
-    else if (res) console.warn('☁️ 同步失败:', res.message);
-    _isSyncing = false;
   }).catch(function(e) {
-    console.log('☁️ 云端不可达，本地存储正常使用');
+    console.log('☁️ 云端不可达', e.message);
     _isSyncing = false;
   });
 }

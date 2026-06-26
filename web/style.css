@@ -205,7 +205,9 @@ body{font-family:var(--font);font-size:15px;color:var(--c-t1);background:var(--c
 .subcat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .subcat-chip{padding:6px 14px;border-radius:var(--r-round);font-size:12px;background:var(--c-bg);cursor:pointer;border:0.5px solid transparent;font-weight:500;transition:all .15s;color:var(--c-t2)}
 .subcat-chip.active{background:var(--c-blue);color:#fff;border-color:var(--c-blue)}
-.save-bar{padding:16px}
+.sub-page{padding-bottom:200px}
+#save-bar{display:none;position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(242,242,247,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--c-sep);z-index:501}
+#page-edit.active ~ #save-bar{display:flex!important}
 
 /* ====== SHOPPING LIST ====== */
 .shop-toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--c-card);border-bottom:0.5px solid var(--c-sep);font-size:13px;font-weight:500;margin:16px 16px 0;border-radius:var(--r-md) var(--r-md) 0 0}
